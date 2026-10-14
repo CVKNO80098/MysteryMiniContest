@@ -1,0 +1,58 @@
+/**
+ * 全局样式
+ * 只放最基础的：页面重置 + 几个公共类名。
+ * 单个页面的样式写在各自的 <style scoped> 里，不要堆到这里。
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+  color: #303133;
+  background: #f5f7fa;
+}
+
+a {
+  color: #409eff;
+  text-decoration: none;
+}
+
+/* 白色卡片容器：页面里的每个板块都用它 */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* 一行两端对齐（左边标题、右边按钮时常用） */
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 小号灰色说明文字 */
+.text-muted {
+  color: #909399;
+  font-size: 13px;
+}
+
+/* 红色金额 */
+.price {
+  color: #f56c6c;
+  font-weight: bold;
+}
+
+/* 顶部的筛选栏 */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
