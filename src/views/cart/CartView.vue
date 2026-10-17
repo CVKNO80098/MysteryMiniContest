@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * 购物车 / 结算页
- * 说明：一次只能结算一家店铺的商品，如果购物车里有好几家店的商品，会提示先清理。
- *      结算时把商品列表整理成 items 交给后端，订单号由后端生成。
+ * 结构：商品表格 → 地址和备注 → 提交订单
+ * 一次只能结算一家店的商品，混店会提示先清理；只把 goodsId 和数量交给后端，订单号和金额都由后端来
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

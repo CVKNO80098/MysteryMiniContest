@@ -16,11 +16,11 @@ export function formatTime(value?: string | null): string {
   if (!value) {
     return '-'
   }
-  // 把 T 换成空格，再截掉秒，够用又好懂
+  // 把 T 换成空格，再截掉秒
   return value.replace('T', ' ').slice(0, 16)
 }
 
-/** 生成订单号（示例用，正式应该由后端生成） */
+/** 生成订单号（示例，正式应该由后端请求） */
 export function createOrderNo(): string {
   const now = new Date()
   const time =
@@ -34,7 +34,7 @@ export function createOrderNo(): string {
   return 'CD' + time + random
 }
 
-/** 当前时间，格式和后端 DATETIME 一致："2025-01-01 10:00:00" */
+/** 当前时间，格式和后端 DATETIME 一致，如"2025-01-01 10:00:00" */
 export function nowText(): string {
   const now = new Date()
   const date = now.toLocaleDateString('zh-CN').replace(/\//g, '-')

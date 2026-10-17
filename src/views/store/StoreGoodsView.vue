@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 店铺点单页（外卖 / 小卖部共用）
- * 页面组成：店铺信息 + 分类筛选 + 商品列表 + 底部购物车条
+ * 结构：店铺信息 → 分类筛选 → 商品列表 → 底部购物车条
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

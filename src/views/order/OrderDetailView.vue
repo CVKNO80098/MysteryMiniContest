@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * 订单详情页
- * 展示订单基本信息、收货信息、商品明细、金额明细。
- * 待接单时可以取消，配送中可以确认收货。
+ * 结构：订单信息 → 商品明细 → 金额明细 → 操作按钮
+ * 待接单能取消，配送中能确认收货
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -15,7 +15,7 @@ import { getOrderTypeText, PACKAGE_SIZE_TEXT } from '@/utils/dict'
 import { formatMoney, formatTime } from '@/utils/format'
 
 const props = defineProps<{
-  id: string // 路由参数，是字符串，用之前要 Number() 转换
+  id: string 
 }>()
 
 const router = useRouter()

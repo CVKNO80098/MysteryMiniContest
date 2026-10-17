@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * 店铺列表页
- * 校园外卖（shopType=2）和小卖部（shopType=3）共用这个页面，靠 shopType 区分文字和接口参数。
+ * 结构：标题 → 店铺卡片 → 点进去看商品
+ * 外卖（shopType=2）和小卖部（3）共用这个页面，靠 shopType 分文字和接口参数
  */
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'

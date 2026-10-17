@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * 管理端 - 数据概览
- * 数据来自 GET /api/admin/statistics，后端用几条 count / sum 查询就能实现。
+ * 结构：六个统计卡片 → 常用操作按钮
+ * 数据来自 GET /api/admin/statistics，后端几条 count / sum 就够
  */
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

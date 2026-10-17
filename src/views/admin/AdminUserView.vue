@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 管理端 - 用户管理
- * 可以查看所有用户，并启用 / 禁用账号。
+ * 结构：用户表格 → 启用/禁用
  */
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
- * 首页：欢迎语 + 三大业务入口 + 平台公告
+ * 首页
+ * 结构：欢迎条 → 三个入口卡片 → 公告 → 使用说明
  */
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

@@ -27,11 +27,15 @@ export function getRiderInfo(userId: number) {
 /** 切换接单状态：1 可接单，0 休息中 */
 export function updateRiderStatus(riderId: number, status: number) {
   if (USE_MOCK) {
-    const rider = mockRiderList.find((item) => item.id === riderId)
-    if (rider) {
-      rider.status = status
+    const index = mockRiderList.findIndex((item) => item.id === riderId)
+    if (index === -1) {
+      return Promise.resolve<Rider | null>(null)
     }
-    return Promise.resolve(rider || null)
+    // 用一个新对象替换掉数组里的旧对象，模拟“后端返回一份新数据”。
+    // 页面拿到新对象后才知道数据变了，开关才会跟着动。
+    const updated: Rider = { ...mockRiderList[index], status }
+    mockRiderList[index] = updated
+    return Promise.resolve<Rider | null>(updated)
   }
   return http.put<Rider | null>('/rider/status', { riderId, status })
 }

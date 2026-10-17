@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 我的订单页
- * 上面一排按钮用来筛选状态，下面按订单卡片展示。
+ * 结构：状态筛选 → 订单卡片（待接单的可以取消）
  */
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

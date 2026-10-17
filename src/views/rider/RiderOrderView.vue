@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 我的跑腿（骑手）
- * 显示自己接下的订单，点“标记已送达”把订单改成已完成。
+ * 结构：业绩统计 → 自己的订单列表 → 标记送达
  */
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -30,22 +30,17 @@ async function loadData() {
     statistics.value = await getRiderStatistics(rider.value.id)
     orderList.value = await getOrderList({ riderId: rider.value.id })
   } else {
+    // 不是骑手的话统计也要清掉，不然切成顾客账号还挂着上一个人的数
+    statistics.value = null
     orderList.value = []
   }
   loading.value = false
 }
 
-/** 标记已送达：状态改成 3（已完成） */
+// 标记送达：订单状态改成 3，然后重新拉一遍
 async function handleFinish(order: Order) {
   await updateOrderStatus(order.id, 3, '骑手已送达')
   ElMessage.success('已标记送达')
-  await loadData()
-}
-
-/** 开始配送：状态从待接单改成配送中（这里给骑手一个手动按钮，方便演示） */
-async function handleStart(order: Order) {
-  await updateOrderStatus(order.id, 2, '骑手已取件，开始配送')
-  ElMessage.success('已开始配送')
   await loadData()
 }
 
@@ -110,9 +105,6 @@ onMounted(loadData)
         <div class="flex-between">
           <span class="text-muted">备注：{{ order.remark || '无' }}</span>
           <div>
-            <el-button v-if="order.status === 1" size="small" @click="handleStart(order)">
-              开始配送
-            </el-button>
             <el-button
               v-if="order.status === 2"
               size="small"

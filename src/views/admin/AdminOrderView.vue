@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 管理端 - 订单管理
- * 支持按状态、业务类型筛选，查看全部订单。
+ * 结构：状态和类型筛选 → 订单表格（可以跳到详情）
  */
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

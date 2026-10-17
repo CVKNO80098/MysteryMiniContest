@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * 管理端 - 商品管理
- * 支持：按店铺和关键字查询、新增商品、修改价格库存、上下架、删除。
+ * 结构：筛选栏 → 商品表格 → 新增/修改弹窗
+ * 能按店铺和关键字查，能改价格库存、上下架、删除
  */
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

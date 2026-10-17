@@ -1,16 +1,15 @@
 <script setup lang="ts">
 /**
  * 骑手接单大厅
- * 骑手在这里看到所有“待接单”的订单，点“抢单”就接下这一单。
- * 注意：骑手也是 user，用当前用户的 id 去查 rider 表里的记录。
+ * 结构：骑手信息+接单开关 → 待接单列表 → 抢单
+ * 数据从 stores/rider.ts 来，这里只调 action 和显示
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { acceptOrder, getOrderList } from '@/api/order'
-import { getRiderInfo, getRiderStatistics, updateRiderStatus } from '@/api/rider'
-import type { Order, Rider, RiderStatistics } from '@/types'
-import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+import type { Order } from '@/types'
+import { useRiderStore } from '@/stores/rider'
 import EmptyBox from '@/components/EmptyBox.vue'
 import OrderStatusTag from '@/components/OrderStatusTag.vue'
 import PageTitle from '@/components/PageTitle.vue'
@@ -18,52 +17,47 @@ import { getOrderTypeText, PACKAGE_SIZE_TEXT } from '@/utils/dict'
 import { formatMoney, formatTime } from '@/utils/format'
 
 const router = useRouter()
-const userStore = useUserStore()
+const riderStore = useRiderStore()
 
-const rider = ref<Rider | null>(null)
-const statistics = ref<RiderStatistics | null>(null)
-const hallList = ref<Order[]>([])
+// 解构 state 和 getters 得用 storeToRefs，不然拿到的是普通值，store 变了页面不动
+const { rider, statistics, hallList, status } = storeToRefs(riderStore)
+
+// 加载遮罩就这个页面用，放这儿就行，不用进 store
 const loading = ref(false)
 
-/** 当前用户不是骑手时给出提示，避免学生以为是程序坏了 */
+// 不是骑手就提示一下，免得以为是程序坏了
 const notRider = computed(() => rider.value === null)
 
-/** 加载骑手信息 + 待接单订单 + 业绩统计 */
+// 进页面先拉数据
 async function loadData() {
   loading.value = true
-
-  // 骑手记录用当前用户的 id 去查（data.sql 里李大力的 user_id 是 2）
-  rider.value = await getRiderInfo(userStore.userId)
-
-  if (rider.value) {
-    statistics.value = await getRiderStatistics(rider.value.id)
-  }
-
-  hallList.value = await getOrderList({ status: 1 })
+  await riderStore.loadAll()
   loading.value = false
 }
 
-/** 切换“可接单 / 休息中” */
+// 切接单状态，请求和回滚都在 store 里，这里只管提示
 async function handleSwitchStatus(value: unknown) {
-  if (!rider.value) {
-    return
+  try {
+    await riderStore.changeStatus(Number(value))
+    ElMessage.success(Number(value) === 1 ? '已开始接单' : '已切换为休息中')
+  } catch {
+    ElMessage.error('切换失败，请稍后重试')
   }
-  await updateRiderStatus(rider.value.id, Number(value))
-  ElMessage.success(Number(value) === 1 ? '已开始接单' : '已切换为休息中')
 }
 
-/** 抢单 */
+// 抢单
 async function handleAccept(order: Order) {
   if (!rider.value) {
+    ElMessage.warning('当前账号不是骑手，不能接单')
     return
   }
-  if (rider.value.status !== 1) {
+  if (status.value !== 1) {
     ElMessage.warning('你现在是休息状态，先打开“可接单”开关')
     return
   }
-  await acceptOrder(order.id, rider.value.id)
+
+  await riderStore.accept(order)
   ElMessage.success('接单成功，记得按时送达')
-  await loadData()
   router.push('/rider/mine')
 }
 
@@ -97,8 +91,9 @@ onMounted(loadData)
       </div>
       <div>
         <span class="text-muted">接单状态：</span>
+        <!-- status 是 getter 只能读，所以用 :model-value，点完由 action 改 state -->
         <el-switch
-          :model-value="rider.status"
+          :model-value="status"
           :active-value="1"
           :inactive-value="0"
           active-text="可接单"

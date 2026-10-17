@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 个人中心
- * 两块内容：当前用户资料（代替登录信息）+ 收货地址管理。
+ * 结构：用户资料 → 收货地址列表 → 新增/修改地址弹窗
  */
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
