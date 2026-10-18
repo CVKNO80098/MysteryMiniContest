@@ -46,21 +46,22 @@ instance.interceptors.response.use(
 )
 
 /**
- * 对外的请求对象。
- * 页面里只用 http.get / http.post / http.put / http.delete 这四个方法。
+ * 对外的请求对象，页面里只用这四个方法
+ * 拦截器已经把 { code, msg, data } 拆开塞进 response.data 了，这里再取一层，
+ * 页面拿到的就是干净的 data（之前漏了这层 .then，拿到的是整个响应对象）
  */
 export const http = {
   get<T>(url: string, params?: object): Promise<T> {
-    return instance.get(url, { params }) as unknown as Promise<T>
+    return instance.get(url, { params }).then((response) => response.data as T)
   },
   post<T>(url: string, data?: object): Promise<T> {
-    return instance.post(url, data) as unknown as Promise<T>
+    return instance.post(url, data).then((response) => response.data as T)
   },
   put<T>(url: string, data?: object): Promise<T> {
-    return instance.put(url, data) as unknown as Promise<T>
+    return instance.put(url, data).then((response) => response.data as T)
   },
   delete<T>(url: string, params?: object): Promise<T> {
-    return instance.delete(url, { params }) as unknown as Promise<T>
+    return instance.delete(url, { params }).then((response) => response.data as T)
   },
 }
 

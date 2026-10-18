@@ -7,10 +7,15 @@ import type { Goods, GoodsCategory, Shop, ShopType } from '@/types'
 import { mockCategoryList, mockGoodsList, mockShopList } from './mock'
 import { http } from './request'
 
-/** 查询店铺列表：shopType 传 2 是校园外卖，传 3 是小卖部 */
-export function getShopList(shopType: ShopType) {
+/**
+ * 查询店铺列表
+ * shopType 传 2 查外卖，传 3 查小卖部，不传就是全部（管理端的店铺管理用）
+ */
+export function getShopList(shopType?: ShopType) {
   if (USE_MOCK) {
-    return Promise.resolve(mockShopList.filter((shop) => shop.shopType === shopType))
+    return Promise.resolve(
+      shopType ? mockShopList.filter((shop) => shop.shopType === shopType) : [...mockShopList],
+    )
   }
   return http.get<Shop[]>('/shop/list', { shopType })
 }

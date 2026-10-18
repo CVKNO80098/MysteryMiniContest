@@ -1,5 +1,5 @@
 /**
- * 管理端路由（数据概览、商品管理、订单管理、用户管理）
+ * 管理端路由（数据概览、商品管理、店铺管理、订单管理、用户管理、公告管理）
  * 管理端用单独的 AdminLayout（左侧菜单），和顾客端分开。
  */
 import type { RouteRecordRaw } from 'vue-router'
@@ -24,6 +24,12 @@ export const adminRoutes: RouteRecordRaw[] = [
         meta: { title: '商品管理' },
       },
       {
+        path: 'shops',
+        name: 'adminShops',
+        component: () => import('@/views/admin/AdminShopView.vue'),
+        meta: { title: '店铺管理' },
+      },
+      {
         path: 'orders',
         name: 'adminOrders',
         component: () => import('@/views/admin/AdminOrderView.vue'),
@@ -34,6 +40,12 @@ export const adminRoutes: RouteRecordRaw[] = [
         name: 'adminUsers',
         component: () => import('@/views/admin/AdminUserView.vue'),
         meta: { title: '用户管理' },
+      },
+      {
+        path: 'notices',
+        name: 'adminNotices',
+        component: () => import('@/views/admin/AdminNoticeView.vue'),
+        meta: { title: '公告管理' },
       },
     ],
   },

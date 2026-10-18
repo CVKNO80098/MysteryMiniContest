@@ -55,8 +55,10 @@ onMounted(async () => {
     <div class="card">
       <h3 class="block-title">常用操作</h3>
       <el-button type="primary" @click="router.push('/admin/goods')">商品管理</el-button>
+      <el-button @click="router.push('/admin/shops')">店铺管理</el-button>
       <el-button @click="router.push('/admin/orders')">订单管理</el-button>
       <el-button @click="router.push('/admin/users')">用户管理</el-button>
+      <el-button @click="router.push('/admin/notices')">公告管理</el-button>
     </div>
   </div>
 </template>

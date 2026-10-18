@@ -43,6 +43,7 @@ const entries = [
 
 onMounted(async () => {
   noticeList.value = await getAnnouncementList(1)
+  console.log('公告列表', noticeList.value.length)
 })
 </script>
 

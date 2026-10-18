@@ -13,8 +13,10 @@ const userStore = useUserStore()
 const menus = [
   { path: '/admin', label: '数据概览' },
   { path: '/admin/goods', label: '商品管理' },
+  { path: '/admin/shops', label: '店铺管理' },
   { path: '/admin/orders', label: '订单管理' },
   { path: '/admin/users', label: '用户管理' },
+  { path: '/admin/notices', label: '公告管理' },
 ]
 </script>
 

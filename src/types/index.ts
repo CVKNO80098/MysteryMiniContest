@@ -202,8 +202,9 @@ export interface Announcement {
   content: string
   image: string
   type: number // 1 公告  2 轮播图
-  status: number
-  sort: number
+  status: number // 1 已发布  0 已下架
+  sort: number // 排序，小的在前
+  createTime?: string // 创建时间，管理端列表显示用
 }
 
 /** 下单时提交给后端的数据 */
