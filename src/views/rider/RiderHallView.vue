@@ -40,8 +40,8 @@ async function handleSwitchStatus(value: unknown) {
   try {
     await riderStore.changeStatus(Number(value))
     ElMessage.success(Number(value) === 1 ? '已开始接单' : '已切换为休息中')
-  } catch {
-    ElMessage.error('切换失败，请稍后重试')
+  } catch (error) {
+    ElMessage.error('切换失败，请稍后重试123：' + (error as Error).message)
   }
 }
 

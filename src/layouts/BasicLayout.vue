@@ -32,6 +32,13 @@ const menus = computed(() => {
   return list
 })
 
+/* 导航块配色 */
+const menuColors: Record<string, string> = {
+  '/express': '#409eff',
+  '/food': '#67c23a',
+  '/shop': '#e6a23c',
+}
+
 /** 当前菜单高亮：/food/1 这类子页面也要让 /food 高亮 */
 const activeMenu = computed(() => {
   const matched = menus.value.find((menu) => menu.path !== '/' && route.path.startsWith(menu.path))
@@ -76,7 +83,7 @@ onMounted(() => {
 
         <el-menu :default-active="activeMenu" mode="horizontal" router class="layout-menu">
           <el-menu-item v-for="menu in menus" :key="menu.path" :index="menu.path">
-            <el-icon><component :is="menu.icon" /></el-icon>
+            <el-icon :style="{ color: menuColors[menu.path] }"><component :is="menu.icon" /></el-icon>
             <span>{{ menu.label }}</span>
           </el-menu-item>
         </el-menu>

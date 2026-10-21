@@ -50,12 +50,12 @@ onMounted(async () => {
 <template>
   <div>
     <!-- 欢迎卡片 -->
-    <div class="card flex-between">
+    <div class="card flex-between welcome-banner" style="background: #1688ed">
       <div>
         <h2 class="welcome-title">
           你好，{{ userStore.currentUser ? userStore.currentUser.realName : '同学' }}
         </h2>
-        <p class="text-muted">
+        <p class="text-muted" style="color: rgba(255, 255, 255, 0.85)">
           当前身份：{{ userStore.currentUser ? USER_ROLE_TEXT[userStore.currentUser.role] : '未登录' }}
           · 未登录时点右上角登录（演示账号 xiaoming / 123456，密码统一 123456）
         </p>
@@ -105,6 +105,10 @@ onMounted(async () => {
   font-size: 20px;
 }
 
+.welcome-banner {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .entry-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -114,7 +118,8 @@ onMounted(async () => {
 
 .entry-card {
   background: #fff;
-  border-radius: 8px;
+  border: 1px solid #edeef5;
+  border-radius: 16px;
   padding: 20px;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
