@@ -53,24 +53,29 @@ async function handleRegister() {
   }
 
   loading.value = true
-  const user = await userStore.register({
-    username: form.username,
-    password: form.password,
-    realName: form.realName,
-    nickname: form.realName,
-    phone: form.phone,
-    studentNo: form.studentNo,
-    avatar: '',
-  })
-  loading.value = false
+  try {
+    const user = await userStore.register({
+      username: form.username,
+      password: form.password,
+      realName: form.realName,
+      nickname: form.realName,
+      phone: form.phone,
+      studentNo: form.studentNo,
+      avatar: '',
+    })
 
-  if (!user) {
-    ElMessage.error('注册失败，用户名可能已经被占用了')
-    return
+    if (!user) {
+      ElMessage.error('注册失败，用户名可能已经被占用了')
+      return
+    }
+
+    ElMessage.success('注册成功，请用新账号登录')
+    router.push('/login')
+  } catch {
+    // 拦截器已经把后端 msg 弹出来了，这里只负责复位按钮
+  } finally {
+    loading.value = false
   }
-
-  ElMessage.success('注册成功，请用新账号登录')
-  router.push('/login')
 }
 </script>
 

@@ -4,8 +4,9 @@
  * 什么时候用：后端还没写好，或者想让页面直接能点开看效果时。
  * 把 .env.development 里的 VITE_USE_MOCK 改成 false，然后重启 npm run dev 即可取消使用...但是现在是必须的
  *
- * 重要：这里的数据和 sql/campus_errand.sql 里的演示数据是同一套（id、名称、价格都一样）。
- *      所以关掉 mock 连上后端后，页面看起来几乎没变，方便对比排查问题。
+ * 重要：这里的演示数据尽量和 sql/campus_errand.sql 对齐（id、名称、价格基本一致），
+ *      统计数字是演示值，真实数据由后端算；字段以 src/types/index.ts 为准。
+ *      关掉 mock 连上后端后，页面看起来几乎没变，方便对比排查问题。
  *      对接完成后，这个文件可以整份删掉，接口文件里的 if (USE_MOCK) 分支也一起删。
  */
 import type {
@@ -245,9 +246,9 @@ export const mockOrderList: Order[] = [
     packageSize: 2,
     packageWeight: 2.5,
     goodsAmount: 0,
-    deliveryFee: 2,
+    deliveryFee: 3,
     tip: 1,
-    totalAmount: 3,
+    totalAmount: 4,
     remark: '有点重，麻烦送到宿舍门口',
     expectTime: '2024-05-20 18:00:00',
     status: 1,
@@ -391,10 +392,10 @@ export const mockAnnouncementList: Announcement[] = [
 /* ---------------- 管理端统计（临时演示数字，真实数据由后端算） ---------------- */
 
 export const mockStatistics: Statistics = {
-  todayOrderCount: 36,
-  todayAmount: 428.5,
-  waitAcceptCount: 5,
-  finishCount: 28,
-  userCount: 128,
-  riderCount: 12,
+  todayOrderCount: 4,
+  todayAmount: 40.5,
+  waitAcceptCount: 2,
+  finishCount: 1,
+  userCount: 3,
+  riderCount: 1,
 }

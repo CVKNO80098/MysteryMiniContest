@@ -24,22 +24,25 @@ const loading = ref(false)
 
 async function loadData() {
   loading.value = true
-  rider.value = await getRiderInfo(userStore.userId)
+  try {
+    rider.value = await getRiderInfo(userStore.userId)
 
-  if (rider.value) {
-    statistics.value = await getRiderStatistics(rider.value.id)
-    orderList.value = await getOrderList({ riderId: rider.value.id })
-  } else {
-    // 不是骑手的话统计也要清掉，不然切成顾客账号还挂着上一个人的数
-    statistics.value = null
-    orderList.value = []
+    if (rider.value) {
+      statistics.value = await getRiderStatistics(rider.value.id)
+      orderList.value = await getOrderList({ riderId: rider.value.id })
+    } else {
+      // 不是骑手的话统计也要清掉，不然切成顾客账号还挂着上一个人的数
+      statistics.value = null
+      orderList.value = []
+    }
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
 // 标记送达：订单状态改成 3，然后重新拉一遍
 async function handleFinish(order: Order) {
-  await updateOrderStatus(order.id, 3, '骑手已送达')
+  await updateOrderStatus(order.id, 3, '骑手已送达', userStore.userId, 2)
   ElMessage.success('已标记送达')
   await loadData()
 }
@@ -63,11 +66,11 @@ onMounted(loadData)
     <!-- 业绩统计 -->
     <div v-if="statistics" class="stat-row">
       <div class="card stat-item">
-        <div class="stat-value">{{ statistics.todayOrderCount }}</div>
+        <div class="stat-value">{{ statistics.todayOrders }}</div>
         <div class="text-muted">今日完成</div>
       </div>
       <div class="card stat-item">
-        <div class="stat-value">{{ statistics.totalOrderCount }}</div>
+        <div class="stat-value">{{ statistics.totalOrders }}</div>
         <div class="text-muted">累计完成</div>
       </div>
       <div class="card stat-item">

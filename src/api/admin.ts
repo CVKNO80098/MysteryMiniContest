@@ -16,6 +16,22 @@ export function getStatistics() {
   return http.get<Statistics>('/admin/statistics')
 }
 
+/** 管理端商品列表：包含已下架商品 */
+export function getAdminGoodsList() {
+  if (USE_MOCK) {
+    return Promise.resolve([...mockGoodsList])
+  }
+  return http.get<Goods[]>('/admin/goods/list')
+}
+
+/** 管理端店铺列表：包含休息中的店铺 */
+export function getAdminShopList() {
+  if (USE_MOCK) {
+    return Promise.resolve([...mockShopList])
+  }
+  return http.get<Shop[]>('/admin/shop/list')
+}
+
 /** 新增商品 */
 export function saveGoods(goods: Goods) {
   if (USE_MOCK) {
@@ -27,27 +43,27 @@ export function saveGoods(goods: Goods) {
 }
 
 /** 修改商品（改价格、库存、上架下架） */
-export function updateGoods(goods: Goods) {
+export function updateGoods(goods: Goods): Promise<void> {
   if (USE_MOCK) {
     const index = mockGoodsList.findIndex((item) => item.id === goods.id)
     if (index > -1) {
       mockGoodsList[index] = goods
     }
-    return Promise.resolve(goods)
+    return Promise.resolve()
   }
-  return http.put<Goods>('/admin/goods/update', goods)
+  return http.put<void>('/admin/goods/update', goods)
 }
 
 /** 删除商品 */
-export function deleteGoods(id: number) {
+export function deleteGoods(id: number): Promise<void> {
   if (USE_MOCK) {
     const index = mockGoodsList.findIndex((item) => item.id === id)
     if (index > -1) {
       mockGoodsList.splice(index, 1)
     }
-    return Promise.resolve(true)
+    return Promise.resolve()
   }
-  return http.delete<boolean>(`/admin/goods/${id}`)
+  return http.delete<void>(`/admin/goods/${id}`)
 }
 
 /** 新增店铺 */
@@ -61,27 +77,27 @@ export function saveShop(shop: Shop) {
 }
 
 /** 修改店铺（营业状态、配送费、公告） */
-export function updateShop(shop: Shop) {
+export function updateShop(shop: Shop): Promise<void> {
   if (USE_MOCK) {
     const index = mockShopList.findIndex((item) => item.id === shop.id)
     if (index > -1) {
       mockShopList[index] = shop
     }
-    return Promise.resolve(shop)
+    return Promise.resolve()
   }
-  return http.put<Shop>('/admin/shop/update', shop)
+  return http.put<void>('/admin/shop/update', shop)
 }
 
 /** 启用 / 禁用用户：status 传 1 启用，0 禁用 */
-export function updateUserStatus(userId: number, status: number) {
+export function updateUserStatus(userId: number, status: number): Promise<void> {
   if (USE_MOCK) {
     const user = mockUserList.find((item) => item.id === userId)
     if (user) {
       user.status = status
     }
-    return Promise.resolve(true)
+    return Promise.resolve()
   }
-  return http.put<boolean>('/admin/user/status', { userId, status })
+  return http.put<void>('/admin/user/status', { userId, status })
 }
 
 /** 新增公告 */
@@ -95,25 +111,25 @@ export function saveAnnouncement(announcement: Announcement) {
 }
 
 /** 修改公告（改标题内容、发布下架） */
-export function updateAnnouncement(announcement: Announcement) {
+export function updateAnnouncement(announcement: Announcement): Promise<void> {
   if (USE_MOCK) {
     const index = mockAnnouncementList.findIndex((item) => item.id === announcement.id)
     if (index > -1) {
       mockAnnouncementList[index] = announcement
     }
-    return Promise.resolve(announcement)
+    return Promise.resolve()
   }
-  return http.put<Announcement>('/admin/announcement/update', announcement)
+  return http.put<void>('/admin/announcement/update', announcement)
 }
 
 /** 删除公告 */
-export function deleteAnnouncement(id: number) {
+export function deleteAnnouncement(id: number): Promise<void> {
   if (USE_MOCK) {
     const index = mockAnnouncementList.findIndex((item) => item.id === id)
     if (index > -1) {
       mockAnnouncementList.splice(index, 1)
     }
-    return Promise.resolve(true)
+    return Promise.resolve()
   }
-  return http.delete<boolean>(`/admin/announcement/${id}`)
+  return http.delete<void>(`/admin/announcement/${id}`)
 }

@@ -31,7 +31,7 @@ function firstWord(name: string): string {
     <div class="goods-info">
       <div class="goods-name">{{ goods.goodsName }}</div>
       <div class="goods-desc">{{ goods.description }}</div>
-      <div class="goods-sales">已售 {{ goods.sales }} {{ goods.unit }}</div>
+      <div class="goods-sales">已售 {{ goods.sales }} {{ goods.unit }} · 库存 {{ goods.stock }}</div>
 
       <div class="goods-bottom">
         <div>

@@ -4,22 +4,39 @@
  * 结构：筛选栏 → 商品表格 → 新增/修改弹窗
  * 能按店铺和关键字查，能改价格库存、上下架、删除
  */
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { deleteGoods, saveGoods, updateGoods } from '@/api/admin'
-import { getGoodsList, getShopList } from '@/api/store'
-import type { Goods, Shop } from '@/types'
+import {
+  deleteGoods,
+  getAdminGoodsList,
+  getAdminShopList,
+  saveGoods,
+  updateGoods,
+} from '@/api/admin'
+import { getCategoryList } from '@/api/store'
+import type { Goods, GoodsCategory, Shop } from '@/types'
 import PageTitle from '@/components/PageTitle.vue'
 import { formatMoney } from '@/utils/format'
 
 const goodsList = ref<Goods[]>([])
 const shopList = ref<Shop[]>([])
+const categoryList = ref<GoodsCategory[]>([])
 const loading = ref(false)
 
 /** 查询条件 */
 const query = reactive({
   shopId: 0, // 0 表示全部店铺
   keyword: '',
+})
+
+/** 管理端列表包含已下架商品，所以筛选放在前端做 */
+const showGoods = computed(() => {
+  const keyword = query.keyword.trim()
+  return goodsList.value.filter((goods) => {
+    const matchShop = query.shopId === 0 || goods.shopId === query.shopId
+    const matchKeyword = !keyword || goods.goodsName.includes(keyword)
+    return matchShop && matchKeyword
+  })
 })
 
 const dialogVisible = ref(false)
@@ -38,19 +55,25 @@ const goodsForm = reactive({
   status: 1,
 })
 
-/** 加载店铺和商品 */
+/** 加载店铺和商品（管理端接口包含下架/休息） */
 async function loadData() {
   loading.value = true
-  // 外卖（2）和小卖部（3）的店铺都要，拼成一个数组方便下拉选择
-  const foodShops = await getShopList(2)
-  const marketShops = await getShopList(3)
-  shopList.value = [...foodShops, ...marketShops]
+  try {
+    shopList.value = await getAdminShopList()
+    goodsList.value = await getAdminGoodsList()
+  } finally {
+    loading.value = false
+  }
+}
 
-  goodsList.value = await getGoodsList({
-    shopId: query.shopId === 0 ? undefined : query.shopId,
-    keyword: query.keyword,
-  })
-  loading.value = false
+/** 切店铺时重新加载该店分类 */
+async function loadCategories(shopId: number) {
+  categoryList.value = shopId ? await getCategoryList(shopId) : []
+}
+
+async function onShopChange() {
+  await loadCategories(goodsForm.shopId)
+  goodsForm.categoryId = categoryList.value[0]?.id ?? 0
 }
 
 /** 店铺名：商品列表里显示用 */
@@ -60,10 +83,9 @@ function getShopName(shopId: number): string {
 }
 
 /** 打开新增弹窗 */
-function openAddDialog() {
+async function openAddDialog() {
   editingId.value = 0
-  goodsForm.shopId = shopList.value.length > 0 ? shopList.value[0].id : 0
-  goodsForm.categoryId = 0
+  goodsForm.shopId = shopList.value[0]?.id ?? 0
   goodsForm.goodsName = ''
   goodsForm.price = 0
   goodsForm.originalPrice = 0
@@ -71,11 +93,13 @@ function openAddDialog() {
   goodsForm.unit = '份'
   goodsForm.description = ''
   goodsForm.status = 1
+  await loadCategories(goodsForm.shopId)
+  goodsForm.categoryId = categoryList.value[0]?.id ?? 0
   dialogVisible.value = true
 }
 
 /** 打开修改弹窗 */
-function openEditDialog(goods: Goods) {
+async function openEditDialog(goods: Goods) {
   editingId.value = goods.id
   goodsForm.shopId = goods.shopId
   goodsForm.categoryId = goods.categoryId
@@ -86,6 +110,7 @@ function openEditDialog(goods: Goods) {
   goodsForm.unit = goods.unit
   goodsForm.description = goods.description
   goodsForm.status = goods.status
+  await loadCategories(goods.shopId)
   dialogVisible.value = true
 }
 
@@ -97,6 +122,10 @@ async function handleSave() {
   }
   if (goodsForm.price <= 0) {
     ElMessage.warning('价格要大于 0')
+    return
+  }
+  if (!goodsForm.categoryId) {
+    ElMessage.warning('该店铺还没有分类，请先在数据库里补一个分类')
     return
   }
 
@@ -173,7 +202,7 @@ onMounted(loadData)
         <el-button @click="openAddDialog">新增商品</el-button>
       </div>
 
-      <el-table :data="goodsList" style="width: 100%">
+      <el-table :data="showGoods" style="width: 100%">
         <el-table-column prop="goodsName" label="商品名称" />
         <el-table-column label="所属店铺" width="180">
           <template #default="{ row }">{{ getShopName(row.shopId) }}</template>
@@ -207,12 +236,22 @@ onMounted(loadData)
     <el-dialog v-model="dialogVisible" :title="editingId === 0 ? '新增商品' : '修改商品'" width="480px">
       <el-form label-width="90px">
         <el-form-item label="所属店铺">
-          <el-select v-model="goodsForm.shopId" style="width: 260px">
+          <el-select v-model="goodsForm.shopId" style="width: 260px" @change="onShopChange">
             <el-option
               v-for="shop in shopList"
               :key="shop.id"
               :label="shop.shopName"
               :value="shop.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分类">
+          <el-select v-model="goodsForm.categoryId" style="width: 260px" placeholder="请选择分类">
+            <el-option
+              v-for="category in categoryList"
+              :key="category.id"
+              :label="category.name"
+              :value="category.id"
             />
           </el-select>
         </el-form-item>

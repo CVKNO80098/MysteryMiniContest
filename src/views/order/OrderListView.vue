@@ -34,9 +34,12 @@ const loading = ref(false)
 /** 加载订单列表 */
 async function loadOrderList() {
   loading.value = true
-  const status = activeStatus.value === '' ? '' : (Number(activeStatus.value) as OrderStatus)
-  orderList.value = await getOrderList({ userId: userStore.userId, status })
-  loading.value = false
+  try {
+    const status = activeStatus.value === '' ? '' : (Number(activeStatus.value) as OrderStatus)
+    orderList.value = await getOrderList({ userId: userStore.userId, status })
+  } finally {
+    loading.value = false
+  }
 }
 
 /** 订单显示的地点：外卖小卖部显示店铺名，快递显示驿站名 */
@@ -58,7 +61,12 @@ async function handleCancel(order: Order) {
   if (!result) {
     return
   }
-  await cancelOrder(order.id, result.value)
+  await cancelOrder(
+    order.id,
+    result.value,
+    userStore.userId,
+    userStore.currentUser?.role ?? 1,
+  )
   ElMessage.success('订单已取消')
   await loadOrderList()
 }

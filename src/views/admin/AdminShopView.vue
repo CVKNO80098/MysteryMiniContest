@@ -6,8 +6,7 @@
  */
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { saveShop, updateShop } from '@/api/admin'
-import { getShopList } from '@/api/store'
+import { saveShop, updateShop, getAdminShopList } from '@/api/admin'
 import type { Shop, ShopType } from '@/types'
 import EmptyBox from '@/components/EmptyBox.vue'
 import PageTitle from '@/components/PageTitle.vue'
@@ -45,11 +44,14 @@ const showList = computed(() => {
   return shopList.value.filter((shop) => shop.shopType === queryType.value)
 })
 
-// 不传类型就是全部
+// 管理端接口包含休息中的店铺，不传类型就是全部
 async function loadData() {
   loading.value = true
-  shopList.value = await getShopList()
-  loading.value = false
+  try {
+    shopList.value = await getAdminShopList()
+  } finally {
+    loading.value = false
+  }
 }
 
 // 打开新增弹窗

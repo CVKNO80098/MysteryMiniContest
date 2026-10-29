@@ -46,10 +46,13 @@ export function getRiderStatistics(riderId: number) {
     const rider = mockRiderList.find((item) => item.id === riderId)
     const list = mockOrderList.filter((order) => order.riderId === riderId)
     return Promise.resolve<RiderStatistics>({
-      todayOrderCount: list.filter((order) => order.status === 3).length,
-      totalOrderCount: rider ? rider.totalOrders : 0,
-      todayAmount: list.reduce((sum, order) => sum + order.totalAmount, 0),
+      todayOrders: list.filter((order) => order.status === 3).length,
+      totalOrders: rider ? rider.totalOrders : 0,
+      todayAmount: list
+        .filter((order) => order.status === 3)
+        .reduce((sum, order) => sum + order.deliveryFee + order.tip, 0),
       creditScore: rider ? rider.creditScore : 100,
+      doingOrders: list.filter((order) => order.status === 2).length,
     })
   }
   return http.get<RiderStatistics>('/rider/statistics', { riderId })

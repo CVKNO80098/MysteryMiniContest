@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { cancelOrder, getOrderDetail, updateOrderStatus } from '@/api/order'
 import type { Order } from '@/types'
+import { useUserStore } from '@/stores/user'
 import OrderStatusTag from '@/components/OrderStatusTag.vue'
 import PageTitle from '@/components/PageTitle.vue'
 import { getOrderTypeText, PACKAGE_SIZE_TEXT } from '@/utils/dict'
@@ -19,6 +20,7 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+const userStore = useUserStore()
 const order = ref<Order | null>(null)
 const loading = ref(false)
 
@@ -27,8 +29,11 @@ const items = computed(() => (order.value && order.value.items ? order.value.ite
 
 async function loadOrder() {
   loading.value = true
-  order.value = await getOrderDetail(Number(props.id))
-  loading.value = false
+  try {
+    order.value = await getOrderDetail(Number(props.id))
+  } finally {
+    loading.value = false
+  }
 }
 
 /** 取消订单 */
@@ -45,7 +50,12 @@ async function handleCancel() {
   if (!result) {
     return
   }
-  await cancelOrder(order.value.id, result.value)
+  await cancelOrder(
+    order.value.id,
+    result.value,
+    userStore.userId,
+    userStore.currentUser?.role ?? 1,
+  )
   ElMessage.success('订单已取消')
   await loadOrder()
 }
@@ -55,7 +65,13 @@ async function handleFinish() {
   if (!order.value) {
     return
   }
-  await updateOrderStatus(order.value.id, 3, '顾客确认收货')
+  await updateOrderStatus(
+    order.value.id,
+    3,
+    '顾客确认收货',
+    userStore.userId,
+    userStore.currentUser?.role ?? 1,
+  )
   ElMessage.success('已确认收货')
   await loadOrder()
 }

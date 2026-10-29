@@ -49,19 +49,24 @@ async function handleLogin() {
   }
 
   loading.value = true
-  const user = await userStore.login(form.username, form.password)
-  loading.value = false
+  try {
+    const user = await userStore.login(form.username, form.password)
 
-  if (!user) {
-    ElMessage.error('用户名或密码错误')
-    return
+    if (!user) {
+      ElMessage.error('用户名或密码错误')
+      return
+    }
+
+    ElMessage.success(`欢迎回来，${user.realName}`)
+
+    // 之前想访问哪个页面，登录成功后回到那个页面；没有就回首页
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
+    router.push(redirect)
+  } catch {
+    // 拦截器已经把后端 msg 弹出来了，这里只负责复位按钮
+  } finally {
+    loading.value = false
   }
-
-  ElMessage.success(`欢迎回来，${user.realName}`)
-
-  // 之前想访问哪个页面，登录成功后回到那个页面；没有就回首页
-  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
-  router.push(redirect)
 }
 </script>
 

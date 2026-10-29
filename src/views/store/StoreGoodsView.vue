@@ -34,18 +34,37 @@ const showGoodsList = computed(() => {
   return goodsList.value.filter((goods) => goods.categoryId === activeCategoryId.value)
 })
 
+/** 是否达到起送价：空购物车或未达起送价都不让结算 */
+const reachedMin = computed(() => {
+  const minAmount = shop.value?.minAmount ?? 0
+  return cartStore.totalCount > 0 && cartStore.totalAmount >= minAmount
+})
+
+/** 还差多少起送 */
+const minGap = computed(() => {
+  const minAmount = shop.value?.minAmount ?? 0
+  return Math.max(0, minAmount - cartStore.totalAmount)
+})
+
 /** 加载店铺信息、分类、商品 */
 async function loadData() {
   loading.value = true
-  const id = Number(props.shopId)
-  shop.value = await getShopById(id)
-  categoryList.value = await getCategoryList(id)
-  goodsList.value = await getGoodsList({ shopId: id })
-  loading.value = false
+  try {
+    const id = Number(props.shopId)
+    shop.value = await getShopById(id)
+    categoryList.value = await getCategoryList(id)
+    goodsList.value = await getGoodsList({ shopId: id })
+  } finally {
+    loading.value = false
+  }
 }
 
 /** 加入购物车 */
 async function handleAdd(goods: Goods) {
+  if (goods.stock !== undefined && goods.stock <= 0) {
+    ElMessage.warning('该商品库存不足')
+    return
+  }
   await cartStore.add(goods.shopId, goods.id, 1)
   ElMessage.success(`已把「${goods.goodsName}」加入购物车`)
 }
@@ -105,8 +124,11 @@ onMounted(loadData)
       <div>
         已选 <span class="cart-count">{{ cartStore.totalCount }}</span> 件，合计
         <span class="price">￥{{ formatMoney(cartStore.totalAmount) }}</span>
+        <span v-if="!reachedMin && cartStore.totalCount > 0" class="text-muted" style="margin-left: 8px">
+          还差 ￥{{ formatMoney(minGap) }} 起送
+        </span>
       </div>
-      <el-button type="primary" :disabled="cartStore.totalCount === 0" @click="goCart">
+      <el-button type="primary" :disabled="!reachedMin" @click="goCart">
         去购物车结算
       </el-button>
     </div>

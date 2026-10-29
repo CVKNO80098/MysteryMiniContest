@@ -42,8 +42,11 @@ const showList = computed(() => {
 // 查全部（含已下架的）
 async function loadData() {
   loading.value = true
-  noticeList.value = await getAllAnnouncementList()
-  loading.value = false
+  try {
+    noticeList.value = await getAllAnnouncementList()
+  } finally {
+    loading.value = false
+  }
 }
 
 // 打开新增弹窗

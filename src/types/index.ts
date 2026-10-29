@@ -251,10 +251,14 @@ export interface Statistics {
   riderCount: number // 骑手总数
 }
 
-/** 骑手端业绩统计 */
+/** 骑手端业绩统计（字段与后端 RiderStatisticsVO / docs/03 8.4 一致） */
 export interface RiderStatistics {
-  todayOrderCount: number // 今日完成单数
-  totalOrderCount: number // 累计完成单数
-  todayAmount: number // 今日订单金额合计
+  riderId?: number
+  realName?: string
+  status?: number
+  todayOrders: number // 今日完成单数
+  totalOrders: number // 累计完成单数
+  todayAmount: number // 今日收入（配送费 + 小费）
   creditScore: number // 信用分
+  doingOrders?: number // 当前配送中
 }

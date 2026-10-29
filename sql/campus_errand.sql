@@ -358,10 +358,10 @@ INSERT INTO `express_station` (`id`, `station_name`, `address`, `phone`, `busine
 -- 3 号：小卖部，已完成
 -- 4 号：代取快递，待接单
 INSERT INTO `orders` (`id`, `order_no`, `order_type`, `user_id`, `rider_id`, `shop_id`, `station_id`, `receiver_name`, `receiver_phone`, `receiver_building`, `receiver_room`, `pickup_code`, `express_company`, `package_size`, `package_weight`, `goods_amount`, `delivery_fee`, `tip`, `total_amount`, `remark`, `expect_time`, `status`, `pay_status`, `pay_time`, `accept_time`, `finish_time`, `cancel_reason`) VALUES
-(1, 'CE202405200001', 1, 1, NULL, NULL, 1, '张小明', '13800000001', '3号楼', '305', '8-2-3051', '中通快递', 2, 2.50, 0.00, 2.00, 1.00, 3.00, '有点重，麻烦送到宿舍门口', '2024-05-20 18:00:00', 1, 1, '2024-05-20 12:05:00', NULL, NULL, NULL),
-(2, 'CE202405200002', 2, 1, 1,    1,    NULL, '张小明', '13800000001', '3号楼', '305', NULL, NULL, NULL, NULL, 20.00, 2.00, 0.00, 22.00, '拉面多加辣，鸡蛋单独装', '2024-05-20 12:40:00', 2, 1, '2024-05-20 12:10:00', '2024-05-20 12:15:00', NULL, NULL),
-(3, 'CE202405200003', 3, 1, 1,    3,    NULL, '张小明', '13800000001', '1号楼', '512', NULL, NULL, NULL, NULL, 15.50, 3.00, 0.00, 18.50, '放宿舍门口就行，不用敲门', '2024-05-19 21:00:00', 3, 1, '2024-05-19 20:20:00', '2024-05-19 20:22:00', '2024-05-19 20:45:00', NULL),
-(4, 'CE202405200004', 1, 1, NULL, NULL, 2, '张小明', '13800000001', '3号楼', '305', 'JD-0098', '京东快递', 1, 0.80, 0.00, 2.00, 0.50, 2.50, '小件，下午四点以后送', '2024-05-20 16:00:00', 1, 1, '2024-05-20 13:00:00', NULL, NULL, NULL);
+(1, CONCAT('CE', DATE_FORMAT(NOW(), '%Y%m%d'), '0001'), 1, 1, NULL, NULL, 1, '张小明', '13800000001', '3号楼', '305', '8-2-3051', '中通快递', 2, 2.50, 0.00, 3.00, 1.00, 4.00, '有点重，麻烦送到宿舍门口', DATE_ADD(NOW(), INTERVAL 1 HOUR), 1, 1, DATE_SUB(NOW(), INTERVAL 30 MINUTE), NULL, NULL, NULL),
+(2, CONCAT('CE', DATE_FORMAT(NOW(), '%Y%m%d'), '0002'), 2, 1, 1,    1,    NULL, '张小明', '13800000001', '3号楼', '305', NULL, NULL, NULL, NULL, 20.00, 2.00, 0.00, 22.00, '拉面多加辣，鸡蛋单独装', DATE_ADD(NOW(), INTERVAL 30 MINUTE), 2, 1, DATE_SUB(NOW(), INTERVAL 45 MINUTE), DATE_SUB(NOW(), INTERVAL 20 MINUTE), NULL, NULL),
+(3, CONCAT('CE', DATE_FORMAT(NOW(), '%Y%m%d'), '0003'), 3, 1,    1,    3,    NULL, '张小明', '13800000001', '1号楼', '512', NULL, NULL, NULL, NULL, 15.50, 3.00, 0.00, 18.50, '放宿舍门口就行，不用敲门', DATE_SUB(NOW(), INTERVAL 10 MINUTE), 3, 1, DATE_SUB(NOW(), INTERVAL 90 MINUTE), DATE_SUB(NOW(), INTERVAL 70 MINUTE), DATE_SUB(NOW(), INTERVAL 40 MINUTE), NULL),
+(4, CONCAT('CE', DATE_FORMAT(NOW(), '%Y%m%d'), '0004'), 1, 1, NULL, NULL, 2, '张小明', '13800000001', '3号楼', '305', 'JD-0098', '京东快递', 1, 0.80, 0.00, 2.00, 0.50, 2.50, '小件，下午四点以后送', DATE_ADD(NOW(), INTERVAL 2 HOUR), 1, 1, DATE_SUB(NOW(), INTERVAL 15 MINUTE), NULL, NULL, NULL);
 
 -- 订单明细：有商品的订单才需要（2 号外卖单、3 号小卖部单）
 INSERT INTO `order_item` (`id`, `order_id`, `goods_id`, `goods_name`, `goods_image`, `price`, `quantity`, `amount`) VALUES

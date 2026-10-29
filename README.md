@@ -1,28 +1,28 @@
-# 校园代跑腿平台（示例项目）
+# 校园代跑腿平台
 
 一个校园里的跑腿平台前端，包含 **代取快递 / 校园外卖 / 送货上门的小卖部** 三大业务，分
 **顾客端、骑手端、管理端** 三种角色。后端由同学用 SpringBoot 自己写，本项目只提供前端代码和对接约定。
 
-前端技术栈：Vue 3 + TypeScript + Vite + Element Plus + Pinia + Vue Router + axios。
+前端技术栈：`Vue 3` + `TypeScript` +` Vite` +` Element Plus` + `Pinia` +` Vue Router` + `axios`。
 
 登录和注册走**真实接口**（`POST /api/user/login`、`POST /api/user/register`）。
-登录成功后的用户信息保存在浏览器里（localStorage），
+登录成功后的用户信息保存在浏览器里（`localStorage`），
 后端不需要 JWT / token / 拦截器，详见 [02-后端对接说明](docs/02-后端对接说明.md) 第七节。
 
-## 一、怎么跑起来
+## 一、如何运行
 
 ```bash
 npm install          # 第一次运行需要，装依赖
 npm run dev          # 启动开发服务器
 ```
 
-打开 <http://localhost:5173> 就能看到页面。默认使用假数据（`src/api/mock.ts`），
-**不需要后端也能把页面完整点一遍**，方便先看效果、再写后端。
+打开 <http://localhost:5173> 就能看到页面。默认 `.env.development` 里 `VITE_USE_MOCK=false`，直接连 8080；
+想脱离后端演示，把 `VITE_USE_MOCK` 改成 `true`，页面就会用 `src/api/mock.ts` 的假数据，能完整点一遍。
 
 其他命令：
 
 ```bash
-npm run build        # 打包（会先做 TypeScript 类型检查）
+npm run build        # 打包为index.html等直接部署文件
 npm run preview      # 本地预览打包结果
 ```
 
@@ -60,11 +60,11 @@ src/
 ```
 
 读代码的顺序建议：`types/index.ts` → `api/` → `stores/` → `views/`。
-每个文件都写清楚了它负责什么，文件名和业务一一对应，不怕找不到。
+每个文件都写清楚了它负责什么，文件名和业务。
 
 ## 三、状态管理（Pinia）
 
-需要“好几个页面共用一份、而且会变”的数据，都放在 `src/stores/` 里，一个业务一个文件：
+需要“好几个页面共用一份、而且会变”的数据，都放在 `src/stores/` 里，一个业务一个文件
 
 | store | 放什么 | 谁在用 |
 | --- | --- | --- |
@@ -72,7 +72,7 @@ src/
 | [cart.ts](src/stores/cart.ts) | 购物车列表（`totalCount`、`totalAmount`、`shopId`） | 顶部角标、点单页底部条、购物车页 |
 | [rider.ts](src/stores/rider.ts) | 骑手信息、接单状态、业绩统计、待接单大厅 | 接单大厅 |
 
-三个 store 写法完全一致，都是三段式：
+三个 store 写法完全一致，都是三段式
 
 | 部分 | 作用 | 对应 Vue 的写法 |
 | --- | --- | --- |
@@ -80,14 +80,11 @@ src/
 | `getters` | 由 state 算出来的值，只读 | `computed` |
 | `actions` | 改数据的方法，可以调接口、可以是 async | `methods` |
 
-可以把它当成**一个天生单例的 `@Service` 类**：`state` 是字段，`getters` 是 getter 方法，
-`actions` 是成员方法，`useXxxStore()` 相当于 `@Autowired` 拿到那个唯一的实例。
-
-**什么时候该放进 store**
+**什么时候放进 store**
 
 - 两个以上页面要读写同一份 → 放（登录用户、购物车、骑手信息）
-- 只有一个页面用的临时状态（弹窗显隐、输入框内容、`loading` 遮罩）→ **不要放**，`ref` 就够
-- 父子组件传值 → 用 `props` / `emit`，不要放
+- 只有一个页面用的临时状态（弹窗显隐、输入框内容、`loading` 遮罩）不放，`ref` 就够
+- 父子组件传值用 `props` / `emit`，不放
 
 **两条硬规矩**
 
@@ -98,7 +95,7 @@ src/
 ## 四、登录、注册和三种身份
 
 打开 <http://localhost:5173/login>（或在页面右上角点“登录”），用下面的演示账号登录。
-登录页上放着这三个账号的按钮，点一下会自动填进表单，密码统一是 `123456`：
+为了方便测试，登录页上放着这三个账号的按钮，点一下会自动填进表单，密码统一是 `123456`：
 
 | 用户 | 用户名 | 密码 | 身份 | 登录后能做什么 |
 | --- | --- | --- | --- | --- |
@@ -107,11 +104,11 @@ src/
 | 王老师 | wanglaoshi | 123456 | 管理员 | 数据概览、商品 / 订单 / 用户管理 |
 
 登录过程就一步：把用户名密码发给 `POST /api/user/login`，后端查一次 user 表，返回用户信息就算成功。
-**没有 token，没有 JWT，没有拦截器**：用户信息存在 localStorage 里，刷新页面不会丢；点“退出登录”只是把它清掉，不用请求后端。
+**注意！没有 token，没有 JWT，没有拦截器**：因为开发时间限制，用户信息存在 localStorage 里，刷新页面不会丢；点“退出登录”只是把它清掉，不用请求后端。
 
 注册在 <http://localhost:5173/register>，注册出来的账号身份固定是“顾客”（role = 1），注册成功后回到登录页自己登一次。
 
-顶部的“骑手工作台”和“管理端”入口只对相应身份的账号显示；直接输网址也能打开，只是页面上会提示一句“当前账号不是骑手 / 管理员”——这只是界面提示，后端没有做任何权限校验。
+顶部的“骑手工作台”和“管理端”入口只对相应身份的账号显示；直接输网址也能打开，只是页面上会提示一句“当前账号不是骑手 / 管理员”——这只是界面提示，后端没有做任何权限校验，没时间了
 
 ## 五、后端需要的端口
 
@@ -119,17 +116,16 @@ src/
 | --- | --- | --- |
 | 前端 Vite 开发服务器 | 5173 | 页面地址 http://localhost:5173 |
 | 后端 SpringBoot | 8080 | 接口地址 http://localhost:8080/api/xxx，**不加 context-path** |
-| MySQL | 3306 | 数据库名 campus_errand，建议账号 root / 123456 |
-| Redis | 6379 | 本项目**不需要**，示例项目没用到缓存 |
-| 生产 Nginx | 80 | 打包上线时才用 |
+| MySQL | 3306 | 数据库名 campus_errand，账号 root / hi58lo32（以 `application.yaml` 为准） |
+| Nginx / Caddy | 80 | 演示服务器反向代理，任选其一即可 |
 
 开发时前端请求的 `/api` 由 Vite 代理转发到 8080（配置在 `vite.config.ts`），所以浏览器看不到跨域。
 后端仍然要配一次跨域（`CorsConfig`），代码见 [02-后端对接说明](docs/02-后端对接说明.md)。
 
 ## 六、数据库
 
-共 **13 张表**，建库脚本在 [sql/campus_errand.sql](sql/campus_errand.sql)，直接复制到 Navicat 或命令行执行即可
-（含建库、建表、演示数据）。
+共 **13 张表**，建库脚本在 [sql/campus_errand.sql](sql/campus_errand.sql)，直接复制到 Navicat 或命令行执行即可，默认的ddl-auto是none，有时候它会出问题，还是手动建表比较好...
+（含建库、建表、演示数据）
 
 | 表名 | 作用 |
 | --- | --- |
@@ -199,5 +195,3 @@ status: 1 待接单  →   status: 2 配送中  →   status: 3 已完成
 - **金额必须由后端重新计算**，前端传的 `deliveryFee` 只用于页面展示；
 - 每个页面的样式写在各自的 `<style scoped>` 里，公共样式才放到 `style.css`；
 - 页面里只写“调 action + 弹提示 + 渲染”，业务逻辑和数据放 `stores/` 和 `api/`。
-
->（该文档由AI根据项目生成，有点懒了...）

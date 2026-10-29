@@ -30,8 +30,11 @@ const pageInfo = computed(() => {
 /** 加载店铺列表 */
 async function loadShopList() {
   loading.value = true
-  shopList.value = await getShopList(props.shopType as ShopType)
-  loading.value = false
+  try {
+    shopList.value = await getShopList(props.shopType as ShopType)
+  } finally {
+    loading.value = false
+  }
 }
 
 /** 点店铺进入商品页：外卖走 /food/:shopId，小卖部走 /shop/:shopId */

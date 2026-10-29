@@ -88,6 +88,11 @@ async function handleSubmit() {
 
   const shopId = cartStore.shopId
   const shop = await getShopById(shopId)
+  const minAmount = shop ? shop.minAmount : 0
+  if (cartStore.totalAmount < minAmount) {
+    ElMessage.warning(`还差 ￥${formatMoney(minAmount - cartStore.totalAmount)} 起送`)
+    return
+  }
 
   const orderForm: OrderCreateForm = {
     // 小卖部是 3，其他都按校园外卖 2 处理

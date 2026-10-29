@@ -17,8 +17,11 @@ const loading = ref(false)
 
 async function loadUserList() {
   loading.value = true
-  userList.value = await getUserList()
-  loading.value = false
+  try {
+    userList.value = await getUserList()
+  } finally {
+    loading.value = false
+  }
 }
 
 /** 切换启用 / 禁用 */

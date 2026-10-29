@@ -38,10 +38,13 @@ const loading = ref(false)
 /** 加载订单列表 */
 async function loadOrderList() {
   loading.value = true
-  const status = activeStatus.value === '' ? '' : (Number(activeStatus.value) as OrderStatus)
-  const orderType = activeType.value === '' ? '' : (Number(activeType.value) as OrderType)
-  orderList.value = await getOrderList({ status, orderType })
-  loading.value = false
+  try {
+    const status = activeStatus.value === '' ? '' : (Number(activeStatus.value) as OrderStatus)
+    const orderType = activeType.value === '' ? '' : (Number(activeType.value) as OrderType)
+    orderList.value = await getOrderList({ status, orderType })
+  } finally {
+    loading.value = false
+  }
 }
 
 /** 订单地点：快递显示驿站，其他显示店铺 */

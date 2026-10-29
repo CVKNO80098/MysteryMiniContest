@@ -127,8 +127,14 @@ export function acceptOrder(id: number, riderId: number) {
   return http.post<Order | null>(`/order/${id}/accept`, { riderId })
 }
 
-/** 修改订单状态：骑手点“已送达”时调用 */
-export function updateOrderStatus(id: number, status: number, remark: string) {
+/** 修改订单状态：骑手点“已送达”、顾客确认收货时调用 */
+export function updateOrderStatus(
+  id: number,
+  status: number,
+  remark: string,
+  operatorId?: number,
+  operatorRole?: number,
+) {
   if (USE_MOCK) {
     const order = mockOrderList.find((item) => item.id === id)
     if (order) {
@@ -139,11 +145,21 @@ export function updateOrderStatus(id: number, status: number, remark: string) {
     }
     return Promise.resolve(order || null)
   }
-  return http.post<Order | null>(`/order/${id}/status`, { status, remark })
+  return http.post<Order | null>(`/order/${id}/status`, {
+    status,
+    remark,
+    operatorId,
+    operatorRole,
+  })
 }
 
 /** 取消订单 */
-export function cancelOrder(id: number, reason: string) {
+export function cancelOrder(
+  id: number,
+  reason: string,
+  operatorId?: number,
+  operatorRole?: number,
+) {
   if (USE_MOCK) {
     const order = mockOrderList.find((item) => item.id === id)
     if (order) {
@@ -152,5 +168,9 @@ export function cancelOrder(id: number, reason: string) {
     }
     return Promise.resolve(order || null)
   }
-  return http.post<Order | null>(`/order/${id}/cancel`, { reason })
+  return http.post<Order | null>(`/order/${id}/cancel`, {
+    reason,
+    operatorId,
+    operatorRole,
+  })
 }

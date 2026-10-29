@@ -36,8 +36,11 @@ function getValue(key: keyof Statistics, money?: boolean): string {
 
 onMounted(async () => {
   loading.value = true
-  statistics.value = await getStatistics()
-  loading.value = false
+  try {
+    statistics.value = await getStatistics()
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 

@@ -31,8 +31,11 @@ const notRider = computed(() => rider.value === null)
 // 进页面先拉数据
 async function loadData() {
   loading.value = true
-  await riderStore.loadAll()
-  loading.value = false
+  try {
+    await riderStore.loadAll()
+  } finally {
+    loading.value = false
+  }
 }
 
 // 切接单状态，请求和回滚都在 store 里，这里只管提示
@@ -85,7 +88,7 @@ onMounted(loadData)
         <p class="text-muted">
           学号 {{ rider.studentNo }} · 手机号 {{ rider.phone }} · 累计完成 {{ rider.totalOrders }} 单
           <template v-if="statistics">
-            · 今日完成 {{ statistics.todayOrderCount }} 单 · 信用分 {{ statistics.creditScore }}
+            · 今日完成 {{ statistics.todayOrders }} 单 · 信用分 {{ statistics.creditScore }}
           </template>
         </p>
       </div>
